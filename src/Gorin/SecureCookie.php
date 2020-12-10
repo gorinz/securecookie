@@ -18,29 +18,24 @@
      $this->key = hash('sha256', $key);
      $this->iv = substr(hash('sha256', $iv), 0, 16);
      foreach ($_COOKIE as $name => $value) {
-       $named = $this->decrypt($name);
-       $valued = $this->decrypt($value);
-       $name = $named ? $named : $name;
-       $value = $valued ? $valued : $value;
+       if ((false === $name = $this->decrypt($name)) || (false === $value = $this->decrypt($value))) {
+         continue;
+       }
        $this->cookie[$name] = [
          'value' => $value,
          'expires' => false,
          'path' => '',
-         'domain' => '',
-         'secure' => false,
-         'httponly' => false
+         'domain' => ''
        ];
      }
    }
 
-   public function set (string $name, string $value = '', int $expires = 0, string $path = '', string $domain = '', bool $secure = false, bool $httponly = false) {
+   public function set (string $name, string $value = '', int $expires = 0, string $path = '', string $domain = '') {
      $this->cookie[$name] = [
        'value' => $value,
        'expires' => $expires,
        'path' => $path,
-       'domain' => $domain,
-       'secure' => $secure,
-       'httponly' => $httponly
+       'domain' => $domain
      ];
      return $this;
    }
@@ -66,7 +61,7 @@
    public function send () {
      foreach ($this->cookie as $name => $opt) {
        if ($opt['expires'] !== false) {
-         setcookie($this->encrypt($name), $this->encrypt($opt['value']), $opt['expires'], $opt['path'], $opt['domain'], $opt['secure'], $opt['httponly']);
+         setcookie($this->encrypt($name), $this->encrypt($opt['value']), $opt['expires'], $opt['path'], $opt['domain'], false, true);
        }
      }
    }
