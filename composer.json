@@ -1,0 +1,17 @@
+{
+    "name": "gorin/securecookie",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gorin",
+            "email": "gorinmilkman@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-0": {
+            "Gorin\\SecureCookie": "src/"
+        }
+    }
+}
